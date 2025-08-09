@@ -1,7 +1,4 @@
 // ignore_for_file: library_private_types_in_public_api, use_super_parameters
-
-import 'dart:developer';
-
 import 'package:facerecognition/components/widgets/appbar.dart';
 import 'package:facerecognition/controllers/global_controller.dart';
 import 'package:facerecognition/views/auth/login_view.dart';
@@ -21,8 +18,7 @@ class _IndexScreenPageState extends State<IndexScreen> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 2), () async {
-      await cGlobal.initState();
-      log("Bearer + ${cGlobal.token}");
+      await cGlobal.init();
       if (cGlobal.getToken() != null) {
         Get.offAll(() => const HomeNavbarButton());
       } else {

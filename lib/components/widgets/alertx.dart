@@ -118,32 +118,34 @@ class Alertx {
           width: 100,
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10),
-                const Icon(Icons.error, size: 80, color: Colors.orange),
-                const SizedBox(height: 10),
-                Text(title).titleText(),
-                const SizedBox(height: 10),
-                Text(
-                  message ?? '',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 20),
-                OButton(
-                  title: 'OK',
-                  onPressed: () {
-                    if (code == 'UNAUTHENTICATED') {
-                      // gstate.token = '';
-                      // Get.offAll(OnBoardingPage());
-                    } else {
-                      Get.back();
-                    }
-                  },
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+                  const Icon(Icons.error, size: 80, color: Colors.orange),
+                  const SizedBox(height: 10),
+                  Text(title).titleText(),
+                  const SizedBox(height: 10),
+                  Text(
+                    message ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 20),
+                  OButton(
+                    title: 'OK',
+                    onPressed: () {
+                      if (code == 'UNAUTHENTICATED') {
+                        // gstate.token = '';
+                        // Get.offAll(OnBoardingPage());
+                      } else {
+                        Get.back();
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

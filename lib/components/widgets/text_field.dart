@@ -13,6 +13,7 @@ class CTextField extends StatelessWidget {
   final IconData? icon;
   final Widget? prefix, suffix;
   final void Function(String)? onChange;
+  final bool readOnly;
 
   // ignore: use_key_in_widget_constructors
   const CTextField({
@@ -27,6 +28,7 @@ class CTextField extends StatelessWidget {
     this.suffix,
     this.onChange,
     this.obscureText = false,
+    this.readOnly = false,
   });
 
   @override
@@ -67,6 +69,7 @@ class CTextField extends StatelessWidget {
             onChanged: onChange,
             obscureText: obscureText,
             keyboardType: inputType,
+            readOnly: readOnly,
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.only(
                 left: 18,

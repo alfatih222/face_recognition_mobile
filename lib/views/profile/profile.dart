@@ -1,6 +1,7 @@
 import 'package:facerecognition/components/widgets/appbar.dart';
 import 'package:facerecognition/components/widgets/profile_list.dart';
 import 'package:facerecognition/controllers/global_controller.dart';
+import 'package:facerecognition/controllers/user_controller.dart';
 import 'package:facerecognition/utils/colors.dart';
 import 'package:facerecognition/views/absen/absen.dart';
 import 'package:facerecognition/views/auth/login_view.dart';
@@ -15,6 +16,13 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final meController = Get.put(MeController());
+
+    // Fetch profile data (jika belum)
+    if (meController.profile.value == null) {
+      meController.fetchMe();
+    }
+
     return Scaffold(
       appBar: getAppBar(title: "Profile"),
       backgroundColor: const Color.fromARGB(255, 233, 233, 233),
@@ -56,62 +64,104 @@ class ProfileView extends StatelessWidget {
                   child: Row(
                     children: [
                       const SizedBox(width: 10),
-                      const SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: CircleAvatar(
-                          radius: 36,
-                          backgroundColor: Colors.white,
-                          backgroundImage: AssetImage(
-                            'assets/images/placeholder.png',
+
+                      // Foto Profil
+                      Obx(() {
+                        final photoUrl =
+                            meController.profile.value?.profilePhotoUrl;
+                        return SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: CircleAvatar(
+                            radius: 36,
+                            backgroundColor: Colors.white,
+                            backgroundImage: photoUrl != null
+                                ? NetworkImage(
+                                    photoUrl.replaceAll(
+                                      'localhost:3000',
+                                      '192.168.67.204:3000',
+                                    ),
+                                  )
+                                : const AssetImage(
+                                        'assets/images/placeholder.png',
+                                      )
+                                      as ImageProvider,
                           ),
-                        ),
-                      ),
+                        );
+                      }),
+
                       const SizedBox(width: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Jalal',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'NIP: 1540580',
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(color: Colors.black),
-                          ),
-                        ],
-                      ),
+
+                      // Nama & NIP
+                      Obx(() {
+                        final profile = meController.profile.value;
+                        final name = profile?.fullname ?? '-';
+                        final nip = profile?.nip ?? '-';
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'NIP: $nip',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(color: Colors.black),
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 30),
+
+                // Menu Items
                 ProfileListTile(
                   title: 'My Profile',
-                  icon: Icon(Icons.person_outline),
+                  icon: const Icon(Icons.person_outline),
                   onTap: () => Get.to(const ProfileEditView()),
                 ),
                 const Divider(thickness: 0.1),
-                ProfileListTile(
-                  title: 'Setting',
-                  icon: Icon(Icons.settings_outlined),
-                  onTap: () => Get.to(const SettingEditView()),
-                ),
+
+                // Cek role untuk tampilkan menu admin-only
+                Obx(() {
+                  final roleId = meController.profile.value?.user?.roleId;
+                  if (roleId == '64971752-2b59-4a4e-b742-ecb337e3b386') {
+                    return Column(
+                      children: [
+                        ProfileListTile(
+                          title: 'Setting',
+                          icon: const Icon(Icons.settings_outlined),
+                          onTap: () => Get.to(const MultiStepSekolahView()),
+                        ),
+                        const Divider(thickness: 0.1),
+                        ProfileListTile(
+                          title: 'Report Absen',
+                          icon: const Icon(Icons.payment_outlined),
+                          onTap: () => Get.to(const AbsenView()),
+                        ),
+                        const Divider(thickness: 0.1),
+                      ],
+                    );
+                  } else {
+                    return const SizedBox(); // Tidak tampilkan apa pun jika bukan admin
+                  }
+                }),
+
                 const Divider(thickness: 0.1),
-                ProfileListTile(
-                  title: 'Report Absen',
-                  icon: Icon(Icons.payment_outlined),
-                  onTap: () => Get.to(const AbsenView()),
-                ),
-                const Divider(thickness: 0.1),
+
                 ProfileListTile(
                   title: 'Logout',
-                  icon: Icon(Icons.logout),
+                  icon: const Icon(Icons.logout),
                   onTap: () {
                     showDialog(
                       context: context,

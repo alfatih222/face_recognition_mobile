@@ -9,10 +9,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   LoginView({super.key});
 
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  bool _obscurePassword = true; // untuk toggle password hide/show
 
   @override
   Widget build(BuildContext context) {
@@ -33,113 +39,140 @@ class LoginView extends StatelessWidget {
             init: LoginController(),
             initState: (_) {},
             builder: (c) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 0,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset("assets/images/one-medix-logo.svg"),
-                        const SizedBox(height: 48),
-                        CTextField(
-                          title: 'Email',
-                          icon: Icons.email_outlined,
-                          size: 20,
-                          hint: 'Masukkan alamat email Anda',
-                          inputType: TextInputType.emailAddress,
-                          controller: c.emailController,
-                        ),
-                        const SizedBox(height: 18),
-                        CTextField(
-                          title: 'Password',
-                          icon: Icons.lock_outlined,
-                          size: 20,
-                          hint: 'Masukkan password',
-                          inputType: TextInputType.emailAddress,
-                          controller: c.passwordController,
-                        ),
-                        const SizedBox(height: 38),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          child: SizedBox(
-                            height: 38,
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                c.loginByEmail();
-                                // Get.to(HomeNavbarButton());
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xff2D4B84),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                ),
+              return SingleChildScrollView(
+                // Biar bisa scroll jika keyboard muncul / layar kecil
+                padding: EdgeInsets.symmetric(vertical: 5.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 0,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset("assets/images/one-medix-logo.svg"),
+                          const SizedBox(height: 48),
+
+                          // Email Field
+                          CTextField(
+                            title: 'Email',
+                            icon: Icons.email_outlined,
+                            size: 20,
+                            hint: 'Masukkan alamat email Anda',
+                            inputType: TextInputType.emailAddress,
+                            controller: c.emailController,
+                          ),
+                          const SizedBox(height: 18),
+
+                          // Password Field dengan toggle
+                          CTextField(
+                            title: 'Password',
+                            icon: Icons.lock_outlined,
+                            size: 20,
+                            hint: 'Masukkan password',
+                            inputType: TextInputType.emailAddress,
+                            controller: c.passwordController,
+                            obscureText: _obscurePassword,
+                            suffix: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                               ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(4),
-                                child: Text(
-                                  "Sign In",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(height: 38),
+
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: SizedBox(
+                              height: 38,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_key.currentState!.validate()) {
+                                    c.loginByEmail();
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff2D4B84),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24.0),
+                                  ),
+                                ),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(4),
+                                  child: Text(
+                                    "Sign In",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                        const Text(
-                          "atau",
-                          style: TextStyle(fontSize: 14, color: Colors.black54),
-                        ),
+                          const Text(
+                            "atau",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
+                          ),
 
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          child: SizedBox(
-                            height: 38,
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Get.to(RegisterView());
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xff2D4B84),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: SizedBox(
+                              height: 38,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.to(RegisterView());
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff2D4B84),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24.0),
+                                  ),
                                 ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(4),
-                                child: Text(
-                                  "Register",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                                child: const Padding(
+                                  padding: EdgeInsets.all(4),
+                                  child: Text(
+                                    "Register",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),

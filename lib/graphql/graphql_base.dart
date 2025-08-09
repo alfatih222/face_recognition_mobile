@@ -33,7 +33,7 @@ class GraphQLBase {
       httpClient: TimeoutHttpClient(timeout: const Duration(seconds: 30)),
       defaultHeaders: {'Authorization': 'Bearer ${gstate.token}'},
     );
-
+    print(['httpsdsddd', httpLink]);
     final Link link = httpLink;
 
     return GraphQLClient(cache: GraphQLCache(), link: link);

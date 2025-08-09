@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum AbsenStatus { hadir, pulang, tidakHadir }
+enum AbsenStatus { hadir, belumLengkap }
 
 class AbsenPreviewTile extends StatelessWidget {
   const AbsenPreviewTile({
@@ -9,9 +9,11 @@ class AbsenPreviewTile extends StatelessWidget {
     required this.date,
     required this.status,
     required this.onTap,
+    required this.checkOutTime,
   });
 
   final String clockInTime;
+  final String checkOutTime;
   final String date;
   final AbsenStatus status;
   final void Function() onTap;
@@ -33,7 +35,7 @@ class AbsenPreviewTile extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Text('Jam Absen:'),
+                    const Text('Check-In:'),
                     const SizedBox(width: 5),
                     Text(
                       clockInTime,
@@ -44,6 +46,20 @@ class AbsenPreviewTile extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(date, style: Theme.of(context).textTheme.bodyMedium),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('Check-Out:'),
+                    const SizedBox(width: 5),
+                    Text(
+                      checkOutTime,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -84,10 +100,8 @@ class AbsenPreviewTile extends StatelessWidget {
     switch (status) {
       case AbsenStatus.hadir:
         return Colors.green;
-      case AbsenStatus.pulang:
+      case AbsenStatus.belumLengkap:
         return Colors.blue;
-      case AbsenStatus.tidakHadir:
-        return Colors.red;
     }
   }
 
@@ -95,10 +109,8 @@ class AbsenPreviewTile extends StatelessWidget {
     switch (status) {
       case AbsenStatus.hadir:
         return 'Masuk';
-      case AbsenStatus.pulang:
-        return 'Pulang';
-      case AbsenStatus.tidakHadir:
-        return 'Tidak Hadir';
+      case AbsenStatus.belumLengkap:
+        return 'Belum Lengkap';
     }
   }
 }

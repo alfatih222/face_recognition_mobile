@@ -31,7 +31,7 @@ class _FaceCameraPageState extends State<FaceCameraPage> {
       final frontCamera = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.front,
       );
-      controller = CameraController(frontCamera, ResolutionPreset.medium);
+      controller = CameraController(frontCamera, ResolutionPreset.high);
       await controller!.initialize();
 
       if (!mounted) return;
@@ -40,7 +40,9 @@ class _FaceCameraPageState extends State<FaceCameraPage> {
         message = 'Kamera siap, mengambil gambar dalam 2 detik...';
       });
 
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(
+        const Duration(seconds: 2),
+      ); // delay 2 detik, sebelumnya 60 detik
       await _captureAndUpload();
     } catch (e) {
       setState(() {
@@ -73,17 +75,13 @@ class _FaceCameraPageState extends State<FaceCameraPage> {
         message = 'Mengirim data ke server...';
       });
 
-      bool success = await absenceController.createAbsence(picture, {
+      final result = await absenceController.createAbsence(picture, {
         'lat': position.latitude,
         'lng': position.longitude,
       });
-
-      Navigator.pop(
-        context,
-        success ? 'Absensi berhasil!' : 'Absensi gagal, coba lagi.',
-      );
+      Get.back(result: result);
     } catch (e) {
-      Navigator.pop(context, 'Terjadi kesalahan: $e');
+      Get.back(result: {'allow': false, 'message': 'Error'});
     } finally {
       if (mounted) {
         setState(() {
@@ -112,30 +110,28 @@ class _FaceCameraPageState extends State<FaceCameraPage> {
       appBar: AppBar(title: const Text('Absensi Wajah')),
       body: Stack(
         children: [
-          Column(
-            children: [
-              AspectRatio(
-                aspectRatio: controller!.value.aspectRatio,
-                child: CameraPreview(controller!),
+          CameraPreview(controller!),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: double.infinity,
+              color: Colors.black54,
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
-              Center(child: Text(message)),
-            ],
+            ),
           ),
+
           if (isProcessing)
             Container(
               color: Colors.black54,
               child: const Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text(
-                      'Sedang mengirim data ke server...',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ],
+                  children: [CircularProgressIndicator(), SizedBox(height: 16)],
                 ),
               ),
             ),
