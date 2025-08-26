@@ -17,7 +17,7 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final meController = Get.put(MeController());
-
+    final d = mainbaseFile;
     // Fetch profile data (jika belum)
     if (meController.profile.value == null) {
       meController.fetchMe();
@@ -64,8 +64,6 @@ class ProfileView extends StatelessWidget {
                   child: Row(
                     children: [
                       const SizedBox(width: 10),
-
-                      // Foto Profil
                       Obx(() {
                         final photoUrl =
                             meController.profile.value?.profilePhotoUrl;
@@ -77,10 +75,7 @@ class ProfileView extends StatelessWidget {
                             backgroundColor: Colors.white,
                             backgroundImage: photoUrl != null
                                 ? NetworkImage(
-                                    photoUrl.replaceAll(
-                                      'localhost:3000',
-                                      '192.168.67.204:3000',
-                                    ),
+                                    photoUrl.replaceAll('localhost:3000', d),
                                   )
                                 : const AssetImage(
                                         'assets/images/placeholder.png',
@@ -132,7 +127,6 @@ class ProfileView extends StatelessWidget {
                 ),
                 const Divider(thickness: 0.1),
 
-                // Cek role untuk tampilkan menu admin-only
                 Obx(() {
                   final roleId = meController.profile.value?.user?.roleId;
                   if (roleId == '64971752-2b59-4a4e-b742-ecb337e3b386') {
@@ -147,13 +141,13 @@ class ProfileView extends StatelessWidget {
                         ProfileListTile(
                           title: 'Report Absen',
                           icon: const Icon(Icons.payment_outlined),
-                          onTap: () => Get.to(const AbsenView()),
+                          onTap: () => Get.to(AllAttendanceView()),
                         ),
                         const Divider(thickness: 0.1),
                       ],
                     );
                   } else {
-                    return const SizedBox(); // Tidak tampilkan apa pun jika bukan admin
+                    return const SizedBox();
                   }
                 }),
 

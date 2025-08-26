@@ -1,137 +1,80 @@
+import 'package:facerecognition/controllers/absence_controller.dart';
+import 'package:facerecognition/controllers/global_controller.dart';
+import 'package:facerecognition/views/pdf/pdf.dart';
 import 'package:flutter/material.dart';
-import 'package:pluto_grid/pluto_grid.dart';
-import 'package:facerecognition/components/widgets/appbar.dart';
-import 'package:facerecognition/utils/colors.dart';
-import 'package:sizer/sizer.dart';
+import 'package:get/get.dart';
 
-class AbsenView extends StatefulWidget {
-  const AbsenView({super.key});
+class AllAttendanceView extends StatelessWidget {
+  AllAttendanceView({Key? key}) : super(key: key);
 
-  @override
-  State<AbsenView> createState() => _AbsenViewState();
-}
-
-class _AbsenViewState extends State<AbsenView> {
-  late List<PlutoColumn> columns;
-  late List<PlutoRow> rows;
-  late PlutoGridStateManager stateManager;
-
-  final List<Map<String, dynamic>> absenData = [
-    {"nama": "Harits", "tanggal": "2025-07-01", "status": "Hadir"},
-    {"nama": "Rina", "tanggal": "2025-07-01", "status": "Izin"},
-    {"nama": "Budi", "tanggal": "2025-07-01", "status": "Alpha"},
-    {"nama": "Ayu", "tanggal": "2025-07-01", "status": "Hadir"},
-    {"nama": "Nina", "tanggal": "2025-07-01", "status": "Hadir"},
-    {"nama": "Tono", "tanggal": "2025-07-01", "status": "Izin"},
-    {"nama": "Rudi", "tanggal": "2025-07-01", "status": "Sakit"},
-    {"nama": "Dina", "tanggal": "2025-07-01", "status": "Alpha"},
-    {"nama": "Farah", "tanggal": "2025-07-01", "status": "Hadir"},
-    {"nama": "Zaki", "tanggal": "2025-07-01", "status": "Hadir"},
-    {"nama": "Andi", "tanggal": "2025-07-01", "status": "Sakit"},
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _setupTable();
-  }
-
-  void _setupTable() {
-    columns = [
-      PlutoColumn(
-        title: 'Nama',
-        field: 'nama',
-        type: PlutoColumnType.text(),
-        enableFilterMenuItem: true,
-      ),
-      PlutoColumn(
-        title: 'Tanggal',
-        field: 'tanggal',
-        type: PlutoColumnType.text(),
-        enableFilterMenuItem: true,
-      ),
-      PlutoColumn(
-        title: 'Status',
-        field: 'status',
-        type: PlutoColumnType.text(),
-        enableFilterMenuItem: true,
-      ),
-    ];
-
-    rows = absenData.map((data) {
-      return PlutoRow(
-        cells: {
-          'nama': PlutoCell(value: data['nama']),
-          'tanggal': PlutoCell(value: data['tanggal']),
-          'status': PlutoCell(value: data['status']),
-        },
-      );
-    }).toList();
-  }
+  final GetAttendancesController controller = Get.put(
+    GetAttendancesController(),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: getAppBar(title: "Absen Data"),
-      backgroundColor: const Color.fromARGB(255, 233, 233, 233),
-      body: Column(
-        children: [
-          // Header
-          Container(
-            height: 10.h,
-            decoration: BoxDecoration(
-              color: OprimaryColor,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(18),
-                bottomRight: Radius.circular(18),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
+    controller.fetchAllAttendances();
 
-          // Tabel Absen dengan PlutoGrid (scroll-only)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: PlutoGrid(
-                  columns: columns,
-                  rows: rows,
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    stateManager = event.stateManager;
-                    stateManager.setShowColumnFilter(true);
-                  },
-                  configuration: PlutoGridConfiguration(
-                    columnFilter: PlutoGridColumnFilterConfig(
-                      filters: const [...FilterHelper.defaultFilters],
-                      resolveDefaultColumnFilter: (column, resolver) {
-                        return resolver<PlutoFilterTypeContains>()
-                            as PlutoFilterType;
-                      },
-                    ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Semua Data Absensi'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            tooltip: 'Generate PDF',
+            onPressed: () async {
+              final pdf = await controller.createAttendancePdf();
+              final pdfUrl = pdf?.path.replaceAll(
+                'localhost:3000',
+                mainbaseFile,
+              );
+              if (pdfUrl != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PdfPreviewPage(pdfUrl: pdfUrl),
                   ),
-                  createHeader: (stateManager) {
-                    return const Padding(padding: EdgeInsets.all(12.0));
-                  },
-                  mode: PlutoGridMode.normal,
-                ),
-              ),
-            ),
+                );
+              }
+            },
           ),
         ],
       ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.errorMessage.value.isNotEmpty) {
+          return Center(child: Text(controller.errorMessage.value));
+        }
+
+        if (controller.attendances.isEmpty) {
+          return const Center(child: Text('Belum ada data absensi.'));
+        }
+
+        return ListView.builder(
+          itemCount: controller.attendances.length,
+          itemBuilder: (context, index) {
+            final absen = controller.attendances[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: ListTile(
+                title: Text('Tanggal: ${absen.date}'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Check In: ${absen.checkIn ?? "-"}'),
+                    Text('Check Out: ${absen.checkOut ?? "-"}'),
+                    Text('Tipe: ${absen.type}'),
+                    Text('Nama: ${absen.user?.profile?.fullname ?? "-"}'),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 }

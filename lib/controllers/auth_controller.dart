@@ -56,6 +56,7 @@ class RegisterController extends GetxController {
   Rx<bool> obscureText = true.obs;
   final emailController = TextEditingController(text: "");
   final passwordController = TextEditingController(text: "");
+  final fullnameController = TextEditingController(text: "");
 
   final cGlobal = Get.find<GlobalController>();
 
@@ -93,6 +94,7 @@ class RegisterController extends GetxController {
       'input': {
         'email': emailController.text,
         'password': passwordController.text,
+        'fullname': fullnameController.text,
       },
       'file': multipartFile,
     };

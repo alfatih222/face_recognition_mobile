@@ -41,7 +41,7 @@ class _FaceCameraPageState extends State<FaceCameraPage> {
       });
 
       await Future.delayed(
-        const Duration(seconds: 2),
+        const Duration(seconds: 5),
       ); // delay 2 detik, sebelumnya 60 detik
       await _captureAndUpload();
     } catch (e) {
@@ -62,7 +62,6 @@ class _FaceCameraPageState extends State<FaceCameraPage> {
 
     try {
       final XFile picture = await controller!.takePicture();
-
       setState(() {
         message = 'Mengambil lokasi...';
       });

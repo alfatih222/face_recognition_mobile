@@ -1,11 +1,14 @@
-// ignore_for_file: unused_field, prefer_final_fields
+// ignore_for_file: unused_field, prefer_final_fields, unnecessary_brace_in_string_interps
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:facerecognition/components/widgets/alertx.dart';
 import 'package:facerecognition/components/widgets/appbar.dart';
 import 'package:facerecognition/components/widgets/text_field.dart';
 import 'package:facerecognition/controllers/auth_controller.dart';
+import 'package:facerecognition/controllers/global_controller.dart';
+import 'package:facerecognition/controllers/setting_controller.dart';
 import 'package:facerecognition/views/auth/login_view.dart';
 import 'package:facerecognition/views/faceDetection/preview.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +26,12 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  final SettingController settingController = Get.put(SettingController());
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController filenameController = TextEditingController();
   final alert = Alertx();
-
+  late Timer _settingTimer;
   File? _imageFile;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -47,13 +51,28 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    settingController.fetchSetting();
+    _settingTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      settingController.fetchSetting();
+    });
+  }
+
+  @override
+  void dispose() {
+    _settingTimer.cancel(); // Stop timer saat screen dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xffE2E3E3),
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/images/background_one-medix.png'),
+          image: AssetImage('assets/images/bc.jpg'),
         ),
       ),
       child: Scaffold(
@@ -80,26 +99,32 @@ class _RegisterViewState extends State<RegisterView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SvgPicture.asset("assets/images/one-medix-logo.svg"),
+                          Obx(() {
+                            final logo =
+                                settingController.setting.value?.logoSekolah;
+                            if (logo != null && logo.isNotEmpty) {
+                              if (logo.endsWith('.svg')) {
+                                return SvgPicture.network(
+                                  'http://$mainbaseFile/uploads/sekolah/logo/$logo',
+                                  width: 150,
+                                  height: 150,
+                                );
+                              } else {
+                                return Image.network(
+                                  'http://$mainbaseFile/uploads/sekolah/logo/$logo',
+                                  width: 150,
+                                  height: 150,
+                                );
+                              }
+                            } else {
+                              return SvgPicture.asset(
+                                "assets/images/one-medix-logo.svg",
+                                width: 150,
+                                height: 150,
+                              );
+                            }
+                          }),
                           const SizedBox(height: 48),
-                          // GestureDetector(
-                          //   onTap: _takePicture,
-                          //   child: CircleAvatar(
-                          //     radius: 45,
-                          //     backgroundColor: Colors.grey.shade300,
-                          //     backgroundImage: _imageFile != null
-                          //         ? FileImage(_imageFile!)
-                          //         : null,
-                          //     child: _imageFile == null
-                          //         ? const Icon(
-                          //             Icons.camera_alt,
-                          //             size: 32,
-                          //             color: Colors.black45,
-                          //           )
-                          //         : null,
-                          //   ),
-                          // ),
-                          // const SizedBox(height: 24),
                           CTextField(
                             title: 'Email',
                             icon: Icons.email_outlined,
@@ -107,6 +132,15 @@ class _RegisterViewState extends State<RegisterView> {
                             hint: 'Masukkan alamat email Anda',
                             inputType: TextInputType.emailAddress,
                             controller: c.emailController,
+                          ),
+                          const SizedBox(height: 18),
+                          CTextField(
+                            title: 'Fullname',
+                            icon: Icons.person_2_outlined,
+                            size: 20,
+                            hint: 'Nama anda',
+                            inputType: TextInputType.name,
+                            controller: c.fullnameController,
                           ),
                           const SizedBox(height: 18),
                           CTextField(
@@ -120,28 +154,6 @@ class _RegisterViewState extends State<RegisterView> {
                             suffix: IconButton(
                               icon: Icon(
                                 _obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          CTextField(
-                            title: 'Konfirmasi Password',
-                            icon: Icons.lock_outline,
-                            size: 20,
-                            hint: 'Masukkan ulang password',
-                            inputType: TextInputType.visiblePassword,
-                            controller: confirmPasswordController,
-                            obscureText: _obscureConfirmPassword,
-                            suffix: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
                                     ? Icons.visibility_off
                                     : Icons.visibility,
                               ),
@@ -209,20 +221,15 @@ class _RegisterViewState extends State<RegisterView> {
                                     );
                                     return;
                                   }
-                                  if (c.passwordController.text.trim() !=
-                                      confirmPasswordController.text.trim()) {
-                                    Get.snackbar(
-                                      "Error",
-                                      "Password dan konfirmasi password tidak sama",
-                                      backgroundColor: Colors.red.shade100,
-                                      colorText: Colors.black,
-                                    );
-                                    return;
-                                  }
                                   c.register(_imageFile!);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff2D4B84),
+                                  backgroundColor: const Color.fromARGB(
+                                    255,
+                                    1,
+                                    85,
+                                    1,
+                                  ),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(24.0),
@@ -263,7 +270,12 @@ class _RegisterViewState extends State<RegisterView> {
                                   Get.to(LoginView());
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff2D4B84),
+                                  backgroundColor: const Color.fromARGB(
+                                    255,
+                                    1,
+                                    85,
+                                    1,
+                                  ),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(24.0),

@@ -1,8 +1,12 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unused_field
+
+import 'dart:async';
 
 import 'package:facerecognition/components/widgets/appbar.dart';
 import 'package:facerecognition/components/widgets/text_field.dart';
 import 'package:facerecognition/controllers/auth_controller.dart';
+import 'package:facerecognition/controllers/global_controller.dart';
+import 'package:facerecognition/controllers/setting_controller.dart';
 import 'package:facerecognition/views/auth/register_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,7 +22,23 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
-  bool _obscurePassword = true; // untuk toggle password hide/show
+  final SettingController settingController = Get.put(SettingController());
+  bool _obscurePassword = true;
+  late Timer _settingTimer;
+  @override
+  void initState() {
+    super.initState();
+    settingController.fetchSetting();
+    _settingTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      settingController.fetchSetting();
+    });
+  }
+
+  @override
+  void dispose() {
+    _settingTimer.cancel(); // Stop timer saat screen dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
         color: Color(0xffE2E3E3),
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/images/background_one-medix.png'),
+          image: AssetImage('assets/images/bc.jpg'),
         ),
       ),
       child: Scaffold(
@@ -55,7 +75,31 @@ class _LoginViewState extends State<LoginView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SvgPicture.asset("assets/images/one-medix-logo.svg"),
+                          Obx(() {
+                            final logo =
+                                settingController.setting.value?.logoSekolah;
+                            if (logo != null && logo.isNotEmpty) {
+                              if (logo.endsWith('.svg')) {
+                                return SvgPicture.network(
+                                  'http://$mainbaseFile/uploads/sekolah/logo/$logo',
+                                  width: 150,
+                                  height: 150,
+                                );
+                              } else {
+                                return Image.network(
+                                  'http://$mainbaseFile/uploads/sekolah/logo/$logo',
+                                  width: 150,
+                                  height: 150,
+                                );
+                              }
+                            } else {
+                              return SvgPicture.asset(
+                                "assets/images/one-medix-logo.svg",
+                                width: 150,
+                                height: 150,
+                              );
+                            }
+                          }),
                           const SizedBox(height: 48),
 
                           // Email Field
@@ -106,7 +150,12 @@ class _LoginViewState extends State<LoginView> {
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff2D4B84),
+                                  backgroundColor: const Color.fromARGB(
+                                    255,
+                                    1,
+                                    85,
+                                    1,
+                                  ),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(24.0),
@@ -148,7 +197,12 @@ class _LoginViewState extends State<LoginView> {
                                   Get.to(RegisterView());
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff2D4B84),
+                                  backgroundColor: const Color.fromARGB(
+                                    255,
+                                    1,
+                                    85,
+                                    1,
+                                  ),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(24.0),

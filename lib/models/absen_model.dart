@@ -4,8 +4,8 @@ class Attendance {
   String id;
   String userId;
   String date;
-  String lat;
-  String lng;
+  String latitude;
+  String longitude;
   String type;
   String? checkIn;
   String? checkOut;
@@ -15,8 +15,8 @@ class Attendance {
     required this.id,
     required this.userId,
     required this.date,
-    required this.lat,
-    required this.lng,
+    required this.latitude,
+    required this.longitude,
     this.checkIn,
     this.checkOut,
     required this.type,
@@ -28,10 +28,10 @@ class Attendance {
       id: json['id'],
       userId: json['user_id'],
       date: json['date'],
-      lat: json['lat'],
+      latitude: json['latitude'],
       checkIn: json['checkIn'] ?? '',
       checkOut: json['checkOut'] ?? '',
-      lng: json['lng'],
+      longitude: json['longitude'],
       type: json['type'],
       user: json['user'] != null ? User.fromJson(json['user']) : null,
     );
@@ -42,10 +42,10 @@ class Attendance {
       'id': id,
       'user_id': userId,
       'date': date,
-      'lat': lat,
+      'latitude': latitude,
       'checkIn': checkIn,
       'checkOut': checkOut,
-      'lng': lng,
+      'longitude': longitude,
       'type': type,
     };
 

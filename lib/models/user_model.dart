@@ -4,7 +4,8 @@ class User {
   String? username;
   String? password;
   String? roleId;
-  Role? role; // tambahan properti role
+  Role? role;
+  Profile? profile; // ✅ Tambahkan profile
 
   User({
     this.id,
@@ -13,6 +14,7 @@ class User {
     this.password,
     this.roleId,
     this.role,
+    this.profile,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -21,32 +23,33 @@ class User {
     username = json['username'];
     password = json['password'];
     roleId = json['role_id'];
-    if (json['role'] != null) {
-      role = Role.fromJson(json['role']);
-    }
+    role = json['role'] != null ? Role.fromJson(json['role']) : null;
+    profile = json['profile'] != null
+        ? Profile.fromJson(json['profile'])
+        : null;
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as String,
-      email: map['email'] as String,
-      username: map['username'] as String,
-      password: map['password'] as String,
-      roleId: map['role_id'] as String,
+      id: map['id'] as String?,
+      email: map['email'] as String?,
+      username: map['username'] as String?,
+      password: map['password'] as String?,
+      roleId: map['role_id'] as String?,
       role: map['role'] != null ? Role.fromMap(map['role']) : null,
+      profile: map['profile'] != null ? Profile.fromMap(map['profile']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['id'] = id;
     data['email'] = email;
     data['username'] = username;
     data['password'] = password;
     data['role_id'] = roleId;
-    if (role != null) {
-      data['role'] = role!.toJson();
-    }
+    if (role != null) data['role'] = role!.toJson();
+    if (profile != null) data['profile'] = profile!.toJson();
     return data;
   }
 }

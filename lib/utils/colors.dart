@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // ignore: non_constant_identifier_names
-Color OprimaryColor = const Color(0xff153676);
+Color OprimaryColor = const Color.fromARGB(255, 21, 118, 42);
 const int primaryDark = 0xff08A045;
 const int textPrimaryDarkColor = 0xff03AD00;
 const int primaryLight = 0xff6BBF59;

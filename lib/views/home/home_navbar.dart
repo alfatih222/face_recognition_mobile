@@ -58,7 +58,7 @@ class _HomeNavbarButtonState extends State<HomeNavbarButton> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: OprimaryColor,
           selectedItemColor: Colors.white,
-          unselectedItemColor: const Color(0xff5C739F),
+          unselectedItemColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           currentIndex: _currentIndex,
           onTap: (int index) {
@@ -68,17 +68,17 @@ class _HomeNavbarButtonState extends State<HomeNavbarButton> {
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Color(0xff5C739F)),
+              icon: Icon(Icons.home, color: Colors.white),
               label: 'Home',
               activeIcon: Icon(Icons.home, color: Colors.white),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.history, color: Color(0xff5C739F)),
+              icon: Icon(Icons.history, color: Colors.white),
               label: 'History',
               activeIcon: Icon(Icons.history, color: Colors.white),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Color(0xff5C739F)),
+              icon: Icon(Icons.person, color: Colors.white),
               label: 'Akun',
               activeIcon: Icon(Icons.person, color: Colors.white),
             ),

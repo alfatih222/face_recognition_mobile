@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-const String mainBaseUrl = 'http://192.168.67.204:3000/graphql';
-const String mainbaseFile = '';
+const String mainBaseUrl = 'http://10.192.74.204:3000/graphql';
+const String mainbaseFile = '10.192.74.204:3000';
 
 class GlobalController extends GetxController with WidgetsBindingObserver {
   static GlobalController get to => Get.find();
