@@ -17,7 +17,7 @@ class AllAttendanceView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Semua Data Absensi'),
+        title: const Text('Semua Data Presensi'),
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
@@ -50,7 +50,7 @@ class AllAttendanceView extends StatelessWidget {
         }
 
         if (controller.attendances.isEmpty) {
-          return const Center(child: Text('Belum ada data absensi.'));
+          return const Center(child: Text('Belum ada data presensi.'));
         }
 
         return ListView.builder(

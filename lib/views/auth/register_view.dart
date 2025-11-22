@@ -218,6 +218,7 @@ class _RegisterViewState extends State<RegisterView> {
                                     Get.snackbar(
                                       "Error",
                                       "Harap pilih gambar terlebih dahulu",
+                                      colorText: const Color.fromARGB(255, 1, 6, 2),backgroundColor: Color.fromARGB(255, 255, 255, 255)
                                     );
                                     return;
                                   }

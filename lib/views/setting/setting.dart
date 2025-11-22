@@ -211,7 +211,7 @@ class _MultiStepSekolahViewState extends State<MultiStepSekolahView> {
       return ListView(
         children: [
           const Text(
-            "Step 3: Setting Absen",
+            "Step 3: Setting Presensi",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),

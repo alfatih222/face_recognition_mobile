@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return const GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'One Medix',
+          title: 'SDIT MADINATUL ILMI',
           home: IndexScreen(),
         );
       },

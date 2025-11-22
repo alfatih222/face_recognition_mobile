@@ -43,7 +43,7 @@ class _HistoryViewState extends State<HistoryView> {
         }
 
         if (absenController.absens.isEmpty) {
-          return const Center(child: Text('Tidak ada data absensi.'));
+          return const Center(child: Text('Tidak ada data Presensi.'));
         }
 
         return ListView(

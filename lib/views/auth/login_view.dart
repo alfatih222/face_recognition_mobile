@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({super.key});
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -164,7 +164,7 @@ class _LoginViewState extends State<LoginView> {
                                 child: const Padding(
                                   padding: EdgeInsets.all(4),
                                   child: Text(
-                                    "Sign In",
+                                    "Login",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,

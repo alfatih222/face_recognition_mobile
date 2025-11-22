@@ -18,6 +18,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final meController = Get.put(MeController());
     final d = mainbaseFile;
+
     // Fetch profile data (jika belum)
     if (meController.profile.value == null) {
       meController.fetchMe();
@@ -67,6 +68,7 @@ class ProfileView extends StatelessWidget {
                       Obx(() {
                         final photoUrl =
                             meController.profile.value?.profilePhotoUrl;
+                          
                         return SizedBox(
                           width: 100,
                           height: 100,
@@ -139,7 +141,7 @@ class ProfileView extends StatelessWidget {
                         ),
                         const Divider(thickness: 0.1),
                         ProfileListTile(
-                          title: 'Report Absen',
+                          title: 'Report Presensi',
                           icon: const Icon(Icons.payment_outlined),
                           onTap: () => Get.to(AllAttendanceView()),
                         ),

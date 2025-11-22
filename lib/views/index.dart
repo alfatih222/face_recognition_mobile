@@ -61,9 +61,9 @@ class _IndexScreenPageState extends State<IndexScreen> {
             fit: BoxFit.cover,
             image: backgroundUrl != null && backgroundUrl.isNotEmpty
                 ? NetworkImage(
-                    'http://${mainbaseFile}/uploads/sekolah/background/${backgroundUrl}',
+                    'http://$mainbaseFile/uploads/sekolah/background/$backgroundUrl',
                   )
-                : const AssetImage('assets/images/background_one-medix.png')
+                : const AssetImage('assets/images/SDIT.png')
                       as ImageProvider,
           ),
         ),
@@ -81,16 +81,16 @@ class _IndexScreenPageState extends State<IndexScreen> {
                     if (logo != null && logo.isNotEmpty)
                       logo.endsWith('.svg')
                           ? SvgPicture.network(
-                              'http://${mainbaseFile}/uploads/sekolah/logo/$logo',
+                              'http://$mainbaseFile/uploads/sekolah/logo/$logo',
                               width: 150,
                             )
                           : Image.network(
-                              'http://${mainbaseFile}/uploads/sekolah/logo/$logo',
+                              'http://$mainbaseFile/uploads/sekolah/logo/$logo',
                               width: 150,
                             )
                     else
                       SvgPicture.asset(
-                        "assets/images/one-medix-logo.svg",
+                        "assets/images/SDIT.png",
                       ), // fallback logo
                   ],
                 ),

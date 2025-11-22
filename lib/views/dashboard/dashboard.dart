@@ -146,7 +146,7 @@ class _DashboardViewState extends State<DashboardView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text("Absen dengan Face ID").blue().title(),
+                        const Text("Presensi dengan Face ID").blue().title(),
                         const SizedBox(height: 12),
                         Image.asset(
                           "assets/images/face.png",
